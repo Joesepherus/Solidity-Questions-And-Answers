@@ -188,6 +188,140 @@
 <h2>How to Interact With a Smart Contract In Web App?</h2>
 <p>If your web application wants to interact with a smart contract on Ethereum, it needs: </p><p></p><ul><li><p>the contract's address</p></li><li><p>the contract's ABI</p></li></ul><p><br>We provide the ABI to the front-end library. The front-end library then translates and delivers any requests we make using that ABI.</p>
 
+<h2>What is Contract Bytecode?</h2>
+<p>Now let's look at what is produced at contract deployment: <strong>the contract's bytecode</strong>. </p><p></p><p>Contract bytecode is the <strong>translation</strong> of that smart contract that <strong>machines can understand</strong>, specifically the EVM. It represents the actual program, in machine code, on the Ethereum computer. <br><br>1. Creation time bytecode - is executed only once at deployment, contains the constructor <br>2. Run time bytecode - is stored on the blockchain as permanent executable </p>
+
+<h2>What's a Receipt Trie?</h2>
+<p>Anytime a transaction occurs on the Ethereum network, the receipt is stored in the receipt trie of that block. The trie contains four pieces of information: </p><p></p><ul><li><p>Post-Transaction State </p></li><li><p>Cumulative Gas Used </p></li><li><p>Set of Logs Created During Execution (ie. did any events fire?) </p></li><li><p>Bloom Filter Composed from the Logs</p></li></ul>
+
+<h2>What is Hardhat?</h2>
+<p>Hardhat is a development environment to <strong>compile</strong>, <strong>deploy</strong>, <strong>test</strong>, and <strong>debug Ethereum smart contracts</strong>. <br><br>Hardhat Features:</p><p></p><ul><li><p><strong>Local testing</strong>, including local Hardhat Network (super useful!!)</p></li><li><p>Solidity <strong>compilation and error-checking</strong></p></li><li><p>Flexible combination with other tooling/plugins (ie, Ethers.js)</p></li><li><p><strong>Easy deployment</strong> of and <strong>interaction</strong> with smart contracts</p></li></ul><p></p><p>Hardhat is one of the ultimate web3 developer tools. It is specifically built cover the entire smart contract developer flow end-to-end.</p>
+<a href="https://university.alchemy.com/course/ethereum/md/639ac11a1422ec000466be36" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What's a payable function?</h2>
+<p>A payable function is one that can receive ether. The receive function is a special function that will be invoked when a smart contract receives ether.</p>
+<a href="https://university.alchemy.com/course/ethereum/md/63989fdfc364970004243bf6" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What is the Ethereum Message?</h2>
+<p>When we have an Externally Owned Account and we want to communicate with the Ethereum Network we broadcast a transaction. Inside this transaction we can choose to send data which is bytecode intended to interact with the EVM. <br><br>The data, often referred to as the calldata, is used to pass a message into the EVM. <br><br>In Solidity we have access to these message through global variables: <br></p><ul><li><p><strong>msg.data</strong> (bytes) - the complete calldata </p></li><li><p><strong>msg.sender</strong> (address) - the address sending the message </p></li><li><p><strong>msg.sig</strong> (bytes4) - the targeted function signature </p></li><li><p><strong>msg.value </strong>(uint) - the amount of wei sent </p></li></ul>
+
+<h2>Why the msg.sig is 4 bytes?</h2>
+<p>Wondering why the msg.sig is 4 bytes?</p><p></p><p>This value is actually <strong>the first four bytes of the keccak256 hash of the function signature</strong>.</p><p></p><p>It provides a way to uniquely identify (and target) the functions on a smart contract without worrying about how long the function signature is.</p><p></p><p>Otherwise you could potentially store a reallyLongNameForAFunction and the calldata would need to store all of this information to invoke that function! 😱</p>
+
+<h2>What are Functions state mutability types?</h2>
+<p>Function's State Mutability can be one of four values: </p><p><strong>view</strong>, <strong>pure</strong>, <strong>payable</strong> and <strong>nonpayable</strong>. </p><p></p><p>The last one is the default, it is nonpayable when we don't specify the state mutability.</p>
+
+<h2>What if someone tried to send a payment to a nonpayable function?</h2>
+<p>The transaction will fail, sending the ether back to the sender.</p>
+
+<h2>What is the receive function?</h2>
+<p>You'll notice that receive does not use the function keyword. This is because it is a special function (like constructor). It is the function that runs when a contract is sent ether without any calldata. <br><br>The <strong>receive</strong> function <strong>must be external</strong>, <strong>payable</strong>, it <strong>cannot receive arguments</strong> and it <strong>cannot return anything</strong>.</p>
+
+<h2>What is this keyword in Contracts?</h2>
+<p>In Solidity the <strong>this</strong> keyword give us access to the <strong>contract itself</strong>. We can call functions on it using the . operator <br><br>Within contracts, the this keyword can be explicitly converted to an address: <br><br>console.log( address(this) ); // 0x7c2c195cd6d34b8f845992d380aadb2730bb9c6f <br>console.log( address(this).balance ); // 0</p>
+
+<h2>What is SELFDESTRUCT opcode?</h2>
+<p><strong>Contracts can destroy themselves</strong> by using the SELFDESTRUCT opcode on the EVM! <br><br>selfdestruct(payable(msg.sender));</p><p><br>This opcode actually <strong>refunds ether</strong> in order to incentivize folks to clean up the blockchain from unused contracts.</p>
+
+<h2>What does it mean to Revert a Transaction?</h2>
+<p>Let's first talk about what it means to revert a transaction. When you revert a transaction, you essentially make it like the transaction never happened. You halt the execution of the transaction and you remove all state changes. The transaction can still be included in a block, and when it is, the transaction sender will still have to pay for the gas used. <br><br>There are 3 ways to express errors in Solidity. They are: <br></p><ul><li><p><strong>assert</strong></p></li><li><p><strong>require</strong></p></li><li><p><strong>revert</strong></p></li></ul><p></p><pre><code>require(someBooleanCondition); 
+    require(someBooleanCondition, "Optional error message"); 
+    if(!someBooleanCondition) { 
+      revert SomeCustomError(errorArg1, errorArg2, ...); 
+    }</code></pre>
+
+<h2>What are some example of Calling Contract Addresses from a Contract?</h2>
+<pre><code>import "hardhat/console.sol";
+
+    contract A {
+        function setValueOnB(address b) external {
+            B(b).storeValue(22);
+        }
+    }
+    
+    contract B {
+        uint x;
+    
+        function storeValue(uint256 _x) external {
+            x = _x;
+            console.log(x); // 22
+        }
+    }
+</code></pre>
+    <p><br>If you dont have the definition of contract B you can just specify the interface <br></p><pre><code>interface B {
+        function storeValue(uint256) external;
+    }
+    
+    contract A {
+        function setValueOnB(address b) external {
+            B(b).storeValue(22);
+        }
+    }
+</code></pre>
+
+<h2>What Calldata?</h2>
+<p>When we want to communicate with a smart contract, we send a transaction from an Externally Owned Account. Inside of that transaction is a data property which is commonly referred to as the <strong>"calldata"</strong>.</p><p></p><p>This call data format is the same for calling solidity functions whether it is in a transaction from an EOA or if its in a message call from one contract to another. <br><br>The format looks a little like this. Let's say you wanted to call a method approve on a contract, that takes a uint:</p><p> </p><pre><code>function approve(uint val) external;</code></pre><p><br>☝️ We can target this function by taking its signature and hashing it with <strong>keccak256</strong>, then taking the first 4 bytes. So for approve here, it would be the keccak256("approve(uint256)"). The first 4 bytes of the resulting hash is <strong>0xb759f954</strong>. This is the first part of our calldata! <br><br>Then we need to decide how much we want to approve. What is our val? Let's say it was 15, that would 0xf in hexadecimal. We will need to pad this value out to 256 bits, or 64 hexadecimal characters. The resulting value will be: <br><br><strong>000000000000000000000000000000000000000000000000000000000000000f</strong></p><p><br>If we combine this with the function signature, our call data would look like this: <br><br><strong>0xb759f954000000000000000000000000000000000000000000000000000000000000000f</strong></p><p><br>Regardless of whether its in a transaction from an EOA or a message call from one contract to another, this would be our calldata sending 15 to an approve function.</p>
+
+<h2>What's Example of calling a Contract function from a Contract manually?</h2>
+<pre><code>interface IHero {
+    function alert() external;
+}
+
+contract Sidekick {
+    function sendAlert(address hero) external {
+        // TODO: alert the hero using the IHero interface
+        IHero(hero).alert();
+    }
+}</code></pre><p><br>Calling it manually would look like this:</p><p></p><pre><code>contract Sidekick {
+    function sendAlert(address hero) external {
+        // TODO: fill in the function signature
+        bytes4 signature = bytes4(keccak256("alert()"));
+
+        (bool success, ) = hero.call(abi.encodePacked(signature));
+
+        require(success);
+    }
+}</code></pre><p><br>Shorthand for encoding and signing in one function: </p><p></p><pre><code>bytes memory payload = abi.encodeWithSignature("rumble(uint256,uint256)", 10, 5); (bool success, ) = hero.call(payload);</code></pre>
+
+<h2>What is tx.origin VS msg.sender?</h2>
+<p><strong>tx.origin</strong> always refers to the address that initially initiated the transaction and remains constant throughout the transaction chain. </p><p></p><p>On the other hand, <strong>msg. sender</strong> represents the sender of the current message or contract interaction and changes with each call.</p>
+<a href="https://dev.to/fassko/understanding-txorigin-and-msgsender-in-solidity-l9o#:~:text=but%20crucial%20purposes.-,tx.,and%20changes%20with%20each%20call." target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Where can I find Goerli testnet RPC Endpoints?</h2>
+<a href="https://www.alchemy.com/chain-connect/chain/goerli" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What to use for querying blockchain?</h2>
+<p>Use Alchemy Sandbox</p>
+<a href="https://dashboard.alchemy.com/sandbox" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Where can I find ethers js documentation?</h2>
+<a href="https://docs.ethers.org/v6/" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Where can I find some good solidity examples?</h2>
+<a href="https://solidity-by-example.org/app/deploy-any-contract/" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What is a reference type you ask?</h2>
+<p>Well, there are two ways in which you can pass an argument to a Solidity function: <br></p><ul><li><p><strong>By value</strong>, which means that the Solidity compiler creates a new copy of the parameter's value and passes it to your function. This allows your function to modify the value without worrying that the value of the initial parameter gets changed. </p></li><li><p><strong>By reference</strong>, which means that your function is called with a... reference to the original variable. Thus, if your function changes the value of the variable it receives, <strong>the value of the original variable gets changed</strong>.</p></li></ul>
+<a href="https://cryptozombies.io/en/lesson/1/chapter/7" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What visibility type are function by default in Solidity?</h2>
+<p>In Solidity, <strong>functions are public by default</strong>. This means <strong>anyone (or any other contract) can call</strong> your contract's function and execute its code. <br><br>Obviously this isn't always desirable, and can make your contract vulnerable to attacks. </p><p></p><p>Thus it's good practice to mark your functions as private by default, and then only make public the functions you want to expose to the world. <br><br>It's convention to <strong>start private function names with an underscore (_)</strong>.</p>
+
+<h2>What are Events?</h2>
+<p><strong>Events</strong> are a way for your contract to<strong> communicate that something happened on the blockchain</strong> to your app front-end, which can be 'listening' for certain events and take action when they happen.</p>
+<a href="https://cryptozombies.io/en/lesson/1/chapter/13" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What are the two types of Memory in Solidity?</h2>
+<p>In Solidity, there are two locations you can store variables — in <strong>storage</strong> and in <strong>memory</strong>. <br><br><strong>Storage</strong> refers to variables stored <strong>permanently</strong> on the blockchain. </p><p></p><p><strong>Memory</strong> variables are <strong>temporary</strong>, and are erased between external function calls to your contract. Think of it like your computer's hard disk vs RAM. <br><br>State variables (variables declared outside of functions) are by default storage and written permanently to the blockchain, while variables declared inside functions are memory and will disappear when the function call ends. <br></p>
+<a href="https://cryptozombies.io/en/lesson/2/chapter/7" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>How to Interact With a Smart Contract from Another Smart Contract?</h2>
+<p>For our contract to talk to another contract on the blockchain that we don't own, first we need to <strong>define an interface</strong>. <br><br>By including this interface in our dapp's code our contract knows what the other contract's functions look like, how to call them, and what sort of response to expect.</p>
+<a href="https://cryptozombies.io/en/lesson/2/chapter/10" target="_blank" rel="noopener noreferrer">link</a>
+
+
+
+
 
 
 
