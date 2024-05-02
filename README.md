@@ -553,3 +553,30 @@ Anyone who is serving your image on the peer-to-peer IPFS network will be able t
 <pre><code>mapping(key =&gt; value) &lt;access specifier&gt; &lt;name&gt;;</code></pre>
 <a href="https://www.geeksforgeeks.org/solidity-mappings/" target="_blank" rel="noopener noreferrer">link</a>
 
+<h2>What's the syntax of events in Solidity?</h2>
+<pre><code>//Declare an Event
+event Deposit(address indexed _from, bytes32 indexed _id, uint _value)
+//Emit an event
+emit Deposit(msg.sender, _id, msg.value);
+</code></pre>
+<a href="https://www.tutorialspoint.com/solidity/solidity_events.htm" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What's the syntax for structs in Solidity?</h2>
+<p>Cannnot use the <code>new</code> keyword for creating structs.</p><p>If you're creating the struct inside a function, you also need to define its data location (<code>memory</code> in the example below), as <code>struct</code> is a <a target="_blank" rel="nofollow noreferrer" href="https://docs.soliditylang.org/en/v0.8.13/types.html#reference-types">reference type</a>.</p><p></p>
+<pre><code>pragma solidity ^0.8;
+contract MyContract {
+    struct Foo {
+        string foo1;
+    }
+    // implicit storage location of the property
+    Foo foo1 = Foo("foo");
+    function myFunction() public {
+        // need to explicitly state location of the variable
+        Foo memory foo2 = Foo("foo"); 
+    }
+}</code></pre>
+<a href="https://stackoverflow.com/questions/71711648/will-i-get-an-error-if-i-use-new-keyword-which-creating-objects-of-structs" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Blockchain Elements That Need Securing</h2>
+<h3>Layer 1</h3><ul><li><p>The underlying blockchain protocol itself (Bitcoin Core, Geth)</p></li></ul><p></p><h3>Layer 2</h3><ul><li><p>An overlaying network on top of layer 1 typically focused on scalability (Bitcoinused to perform mining Lightning network)</p></li></ul><p></p><h3>Smart Contracts</h3><ul><li><p>Automatically executing programs deployed to the blockchain (tokens, dApps, NFTs, etc.)</p></li></ul><p></p><h3>Software Wallets</h3><ul><li><p>Custodial vs. non-custodial</p></li></ul><p></p><h3>Hardware Wallets</h3><ul><li><p>Physical devices for storing private keys that are then used to send and receive funds</p></li></ul><p></p><h3>Mining Software</h3><ul><li><p>Programs used to run specialized hardware</p></li></ul><h3></h3><h3>Centralized Exchanges</h3><p>Typically require KYC (Coinbase, Binance, etc.)</p><p></p><h3>Decentralized Exchanges</h3><ul><li><p>"DeFi" exchanges typically built via Smart Contract w/ web3 front-end</p></li></ul><p></p><h3>People</h3><ul><li><p>Social engineering, rug pulls, asset protection</p></li></ul>
+<a href="https://www.youtube.com/watch?v=WchXkMlKj9w" target="_blank" rel="noopener noreferrer">link</a>
