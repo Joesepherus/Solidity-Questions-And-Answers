@@ -833,3 +833,37 @@ A B  C D  E F G H</code></pre><p></p><p><strong>What do we need in order to prov
         }
     }</code></pre>
 <a href="https://ethereum.stackexchange.com/questions/30912/how-to-compare-strings-in-solidity" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Smart contract Developer's Mindmap</h2>
+<a href="https://github.com/Quillhash/Smart-Contract-Developer-Roadmap" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Companies that are hiring Smart Contract Developers</h2>
+<p><a href="https://www.quillaudits.com/careers#Jobs" target="_blank" rel="noopener noreferrer">QuillAudits</a></p>
+<p><a href="https://boards.greenhouse.io/wyndlabs" target="_blank" rel="noopener noreferrer">Green</a></p>
+
+<h2>Solidity Geeks for Geeks</h2>
+<a href="https://www.geeksforgeeks.org/solidity/" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Expecting reverts with vm.expectRevert</h2>
+<pre><code>vm.expectRevert("incorrect amount");</code></pre><p></p><p>Note that vm.expectRevert must be called right before doing the function that we expect to revert. Now if we delete the require statement, it will revert, so we have better modeled the intended functionality of the smart contract.<br><br><br></p>
+
+<h2>How much ETH do you need to mine POS?</h2>
+<p>Ethereum requires 32 ETH to be staked before a user can operate a node.</p>
+
+<h2>How to Become an Ethereum Smart Contract Engineer | Road Map 2021</h2>
+<a href="https://www.youtube.com/watch?v=WFjeWP148jM" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Interesting Solidity resources</h2>
+<p><a href="https://github.com/jklepatch/eattheblocks" target="_blank" rel="noopener noreferrer">eat the blocks</a></p>
+<p><a href="https://github.com/fravoll/solidity-patterns" target="_blank" rel="noopener noreferrer">solidity patterns</a></p>
+
+<h2>Projects to build using Solidity</h2>
+<ol><li><p>Hello, World! Contract</p></li><li><p>Token Sale Contract</p></li><li><p>Voting Contract</p></li><li><p>Crowdfunding Contract</p></li><li><p>Decentralized Exchange (DEX)</p></li><li><p>NFT Marketplace</p></li><li><p>Multi-Signature Wallet</p></li><li><p>Escrow Contract</p></li><li><p>Decentralized Autonomous Organization (DAO)</p></li><li><p>Supply Chain Management</p></li></ol>
+<a href="https://metana.io/blog/solidity-projects-for-beginners-building-a-strong-foundation/" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>Beginner Roadmap to Smart Contract Auditing</h2>
+<a href="https://www.youtube.com/watch?v=-469Gcye-ZE" target="_blank" rel="noopener noreferrer">link</a>
+
+<h2>What is the job description of Solidity?</h2>
+<ul><li><p>Designing, developing, and testing smart contracts.</p></li><li><p>Analyzing and debugging smart contracts.</p></li><li><p>Integrating smart contracts with other applications.</p></li><li><p>Maintaining and updating smart contracts.</p></li><li><p>Writing documentation for smart contracts.</p></li><li><p>Working with other developers and stakeholders to ensure that smart contracts meet the requirements.</p></li><li><p>Staying up-to-date on the latest developments in Solidity and blockchain technology.</p></li></ul>
+
