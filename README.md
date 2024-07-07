@@ -856,6 +856,7 @@ A B  C D  E F G H</code></pre><p></p><p><strong>What do we need in order to prov
 <h2>Interesting Solidity resources</h2>
 <p><a href="https://github.com/jklepatch/eattheblocks" target="_blank" rel="noopener noreferrer">eat the blocks</a></p>
 <p><a href="https://github.com/fravoll/solidity-patterns" target="_blank" rel="noopener noreferrer">solidity patterns</a></p>
+<p><a href="https://www.quicknode.com/builders-guide?ref=blog.quicknode.com" target="_blank" rel="noopener noreferrer">builders guide</a></p>
 
 <h2>Projects to build using Solidity</h2>
 <ol><li><p>Hello, World! Contract</p></li><li><p>Token Sale Contract</p></li><li><p>Voting Contract</p></li><li><p>Crowdfunding Contract</p></li><li><p>Decentralized Exchange (DEX)</p></li><li><p>NFT Marketplace</p></li><li><p>Multi-Signature Wallet</p></li><li><p>Escrow Contract</p></li><li><p>Decentralized Autonomous Organization (DAO)</p></li><li><p>Supply Chain Management</p></li></ol>
