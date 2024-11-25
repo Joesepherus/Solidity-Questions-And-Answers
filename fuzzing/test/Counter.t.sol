@@ -5,20 +5,25 @@ import {Test, console} from "forge-std/Test.sol";
 import {Counter} from "../src/Counter.sol";
 
 contract CounterTest is Test {
-    Counter public counter;
+    Counter counter;
 
     function setUp() public {
         counter = new Counter();
-        counter.setNumber(0);
     }
 
-    function test_Increment() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
+    function testFuzzIncrement(uint256 value) public {
+         emit log_named_uint("Generated value", value);
+        uint256 initialCount = counter.count();
+        counter.increment(value);
+        assertEq(counter.count(), initialCount + value, "Increment failed");
     }
 
-    function testFuzz_SetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
+    function testFuzzDecrement(uint256 value) public {
+        // Ensure the initial state is large enough for decrement
+        counter.increment(value);
+        uint256 initialCount = counter.count();
+
+        counter.decrement(value);
+        assertEq(counter.count(), initialCount - value, "Decrement failed");
     }
 }
