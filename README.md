@@ -1107,6 +1107,7 @@ function test_overflow() public {
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://www.evmdiff.com/"><strong>evmdiff</strong></a> Allows you to directly compare two chains and clearly identify their differences. For example, Arbitrum One has a number of additional precompiles that aren't present on Ethereum:<br><br><br></p>
 
 <h2>EIP hashing example</h2>
+
 <pre><code>pragma solidity ^0.4.24;
 
     contract Example {
@@ -1193,7 +1194,9 @@ function test_overflow() public {
             assert(verify(mail, v, r, s));
             return true;
         }
-    }</code></pre>
+    }
+</code></pre>
+
 
 <h2>Easily connect EVM networks and chains to your wallet</h2>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://chainlist.org/">link</a></p>
@@ -1229,7 +1232,10 @@ function test_overflow() public {
 <p>The <strong>Checks-Effects-Interactions (CEI)</strong> pattern is named as such because it emphasizes first verifying conditions (checks), then updating the contract’s state (effects), and finally interacting with external contracts (interactions).</p><p></p><ul><li><p><strong>Checks</strong>: Ensure all preconditions are met.</p></li><li><p><strong>Effects</strong>: Update the state of the contract. This is crucial to prevent reentrancy attacks, as the state is modified before any external interaction occurs.</p></li><li><p><strong>Interactions</strong>: Perform external calls (like transferring tokens), which are risky and could lead to reentrancy if not handled correctly.<br><br><br></p></li></ul>
 
 <h2>How to add OpenZeppelin Ownable to my smart contract</h2>
-<p>Install OpenZeppelin Contracts</p><pre><code>npm install @openzeppelin/contracts</code></pre><p></p><pre><code>// SPDX-License-Identifier: MIT
+<p>Install OpenZeppelin Contracts</p>
+
+<pre><code>npm install @openzeppelin/contracts</code></pre>
+<pre><code>// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.0;
     
     import "@openzeppelin/contracts/access/Ownable.sol";
@@ -1240,6 +1246,10 @@ function test_overflow() public {
         // only owner can call this function
         function myFunction onlyOwner(){}
     }</code></pre>
+    
+
+
+
 
 <h2>Require VS custom error</h2>
 <p>Use <code>require</code> for simple checks with basic messages.</p><pre><code>require(balance &gt;= amount, "Insufficient balance");</code></pre><p>Use <code>custom errors</code> for providing mor detailed information about the error and when optimizing for gas efficieny.</p><pre><code>error InsufficientBalance(uint256 available, uint256 required);
@@ -1320,7 +1330,11 @@ function roundDownToNearestWhole(uint256 value) public pure returns (uint256) {
 <pre><code>type(uint256).max</code></pre>
 
 <h2>How to add console log in foundry?</h2>
-<p>Install forge-std</p><pre><code>forge install foundry-rs/forge-std</code></pre><p>Use it</p><pre><code>pragma solidity ^0.8.0;
+<p>Install forge-std</p>
+
+<pre><code>forge install foundry-rs/forge-std</code></pre><p>Use it</p>
+
+<pre><code>pragma solidity ^0.8.0;
 
     import "forge-std/console.sol";
     
@@ -1341,7 +1355,10 @@ function roundDownToNearestWhole(uint256 value) public pure returns (uint256) {
     target.functionCall(data);</code></pre><p></p><p><a target="_blank" rel="noopener noreferrer nofollow" href="https://thequestioners.joesexperiences.com/qaas/763">How to Exploit target.function(call) with arbitrary data</a></p>
 
 <h2>How to exploit target.functionCall(data) with arbitrary data</h2>
-<h3>Exploit Overview:</h3><ol><li><p>The <code>flashLoan</code> function allows any external contract (<code>target</code>) to be called with arbitrary data (<code>data</code>).</p></li><li><p>An attacker can use this to approve the attacker’s own address to spend all tokens from the <code>TrusterLenderPool</code>.</p></li><li><p>Once approved, the attacker can transfer all tokens from the pool to their own address.</p></li></ol><p></p><h3>Steps for the Exploit:</h3><ol><li><p>The <code>attack</code> function initiates the exploit.</p></li><li><p>The <code>flashLoan</code> function is called with <code>amount</code> set to <code>0</code>, so no actual loan is taken.</p></li><li><p>The <code>data</code> argument is crafted to call the <code>approve</code> function on the <code>DamnValuableToken</code> contract, approving the exploit contract to spend the pool’s tokens.</p></li><li><p>After the <code>flashLoan</code> call, the <code>transferFrom</code> function is used to move all tokens from the pool to the attacker's address.</p></li></ol><p></p><h3>Key Issues:</h3><ul><li><p><strong>Arbitrary Function Execution</strong>: The contract allows calling any function on any contract through <code>target.functionCall(data)</code> without checks.</p></li><li><p><strong>No Validation</strong>: There is no validation of what function is being called or the purpose of the external call.</p></li></ul><h3>Mitigation:</h3><ul><li><p>Restrict the <code>target</code> to trusted contracts.</p></li><li><p>Implement validation logic for the <code>data</code> to ensure only safe and intended operations can be performed.</p></li></ul><p></p><p>Contract</p><pre><code>How to exploit this simple anwser poc
+<h3>Exploit Overview:</h3><ol><li><p>The <code>flashLoan</code> function allows any external contract (<code>target</code>) to be called with arbitrary data (<code>data</code>).</p></li><li><p>An attacker can use this to approve the attacker’s own address to spend all tokens from the <code>TrusterLenderPool</code>.</p></li><li><p>Once approved, the attacker can transfer all tokens from the pool to their own address.</p></li></ol><p></p><h3>Steps for the Exploit:</h3><ol><li><p>The <code>attack</code> function initiates the exploit.</p></li><li><p>The <code>flashLoan</code> function is called with <code>amount</code> set to <code>0</code>, so no actual loan is taken.</p></li><li><p>The <code>data</code> argument is crafted to call the <code>approve</code> function on the <code>DamnValuableToken</code> contract, approving the exploit contract to spend the pool’s tokens.</p></li><li><p>After the <code>flashLoan</code> call, the <code>transferFrom</code> function is used to move all tokens from the pool to the attacker's address.</p></li></ol><p></p><h3>Key Issues:</h3><ul><li><p><strong>Arbitrary Function Execution</strong>: The contract allows calling any function on any contract through <code>target.functionCall(data)</code> without checks.</p></li><li><p><strong>No Validation</strong>: There is no validation of what function is being called or the purpose of the external call.</p></li></ul><h3>Mitigation:</h3><ul><li><p>Restrict the <code>target</code> to trusted contracts.</p></li><li><p>Implement validation logic for the <code>data</code> to ensure only safe and intended operations can be performed.</p></li></ul><p></p><p>Contract</p>
+How to exploit this simple anwser poc
+
+<pre><code>
     // SPDX-License-Identifier: MIT
     // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
     pragma solidity =0.8.25;
@@ -1377,7 +1394,11 @@ function roundDownToNearestWhole(uint256 value) public pure returns (uint256) {
     
             return true;
         }
-    }</code></pre><p></p><p>Exploit PoC</p><pre><code>// SPDX-License-Identifier: MIT
+    }</code></pre>
+    
+<p>Exploit PoC</p>
+
+<pre><code>// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.0;
     
     import "../DamnValuableToken.sol";
@@ -1431,7 +1452,9 @@ function roundDownToNearestWhole(uint256 value) public pure returns (uint256) {
 <ul><li><p>L2 is <strong>not just smart contracts</strong> but an <strong>entire system or protocol</strong> that works off-chain or alongside Ethereum.</p></li><li><p>L2 solutions <strong>use smart contracts on Ethereum L1</strong> for specific functions like bridging and validation.</p></li><li><p>If the L2 is EVM-compatible, developers can still use Solidity to write smart contracts for the L2 environment.</p></li></ul>
 
 <h2>What a rug pull contract? Some ERC20 token that has hidden functionalities?</h2>
-<p>A <strong>rug pull</strong> is a type of fraudulent activity in the cryptocurrency space, particularly within decentralized finance (DeFi) and token creation. It typically occurs in projects involving token sales or liquidity pools, where the creators of the project intentionally deceive investors or users.</p><p>In the context of a <strong>smart contract</strong> like an ERC-20 token, a rug pull could involve hidden or malicious functionality that is added to the contract. These hidden features can allow the contract creator to:</p><ol><li><p><strong>Withdraw liquidity</strong>: The creator might have the ability to withdraw all the liquidity from a liquidity pool or exchange, leaving investors with worthless tokens.</p></li><li><p><strong>Mint more tokens</strong>: A malicious contract may have an undisclosed function that allows the creator to mint an unlimited number of tokens, diluting the value of the tokens owned by investors.</p></li><li><p><strong>Pause or freeze functionality</strong>: The contract might include functions that let the creator halt trading or movement of tokens, making it impossible for users to sell their tokens once they’ve been purchased.</p></li><li><p><strong>Drain funds</strong>: Sometimes, the contract may have a function that allows the creator to transfer all the funds from the contract’s balance (such as from token sales or liquidity) to their own wallet.</p></li></ol><p>Rug pulls can be particularly damaging because they exploit the trust users have in smart contracts, which are often assumed to be immutable and transparent. To mitigate the risk of rug pulls, it's important to audit smart contracts and look for suspicious or hidden code.</p><p></p><p>Give me code example</p><pre><code>// SPDX-License-Identifier: MIT
+<p>A <strong>rug pull</strong> is a type of fraudulent activity in the cryptocurrency space, particularly within decentralized finance (DeFi) and token creation. It typically occurs in projects involving token sales or liquidity pools, where the creators of the project intentionally deceive investors or users.</p><p>In the context of a <strong>smart contract</strong> like an ERC-20 token, a rug pull could involve hidden or malicious functionality that is added to the contract. These hidden features can allow the contract creator to:</p><ol><li><p><strong>Withdraw liquidity</strong>: The creator might have the ability to withdraw all the liquidity from a liquidity pool or exchange, leaving investors with worthless tokens.</p></li><li><p><strong>Mint more tokens</strong>: A malicious contract may have an undisclosed function that allows the creator to mint an unlimited number of tokens, diluting the value of the tokens owned by investors.</p></li><li><p><strong>Pause or freeze functionality</strong>: The contract might include functions that let the creator halt trading or movement of tokens, making it impossible for users to sell their tokens once they’ve been purchased.</p></li><li><p><strong>Drain funds</strong>: Sometimes, the contract may have a function that allows the creator to transfer all the funds from the contract’s balance (such as from token sales or liquidity) to their own wallet.</p></li></ol><p>Rug pulls can be particularly damaging because they exploit the trust users have in smart contracts, which are often assumed to be immutable and transparent. To mitigate the risk of rug pulls, it's important to audit smart contracts and look for suspicious or hidden code.</p><p></p><p>Give me code example</p>
+
+<pre><code>// SPDX-License-Identifier: MIT
     pragma solidity ^0.8.0;
     
     import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
