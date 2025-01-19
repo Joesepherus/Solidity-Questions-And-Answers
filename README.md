@@ -1100,3 +1100,124 @@ function test_overflow() public {
 <h2>Signatures Summarized</h2>
 <h3>Signing</h3><ol><li><p>Take a private key + message</p><ul><li><p>The message is generally comprised of: data, function selectors, parameters etc</p></li></ul></li><li><p>Pass both the private key + message into the <a target="_blank" rel="noopener noreferrer nofollow" href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm"><strong>Elliptic Curve Digital Signature Algorithm</strong></a> (ECDSA)</p><ul><li><p>We don't dive deep into ECDSA, but I recommend you do</p></li><li><p>outputs <code>v, r, and s</code></p></li></ul></li><li><p><code>v, r, and s</code> are used to verify someone's signature using the precompile <code>ecrecover</code>.</p></li></ol><p></p><h3>Verifying</h3><ol><li><p>Take signed message</p><ul><li><p>Break into <code>v, r, and s</code> using <code>ECDSA</code></p></li></ul></li><li><p>Take message <code>data</code></p></li><li><p>Pass message <code>data</code> and <code>v, r, and s</code> to <code>ecrecover</code>.</p><ul><li><p><code>ecrecover</code> outputs the address which signed the message</p></li><li><p>Compare this vs your expected address to verify</p></li></ul></li></ol>
 
+<h2>What's the EIP-712 standard?</h2>
+<p>EIP-712 introduced a standardized way to handle hashing and signing typed and structured data.</p><p></p><p>In a practical sense this has transactions formatting data in such a way that rather than messages being a bytesstring, they could be parsed into meaningful, human readable information.</p>
+
+<h2>Whats evmdiff?</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://www.evmdiff.com/"><strong>evmdiff</strong></a> Allows you to directly compare two chains and clearly identify their differences. For example, Arbitrum One has a number of additional precompiles that aren't present on Ethereum:<br><br><br></p>
+
+<h2>EIP hashing example</h2>
+<pre><code>pragma solidity ^0.4.24;
+
+    contract Example {
+        struct EIP712Domain {
+            string name;
+            string version;
+            uint256 chainId;
+            address verifyingContract;
+        }
+    
+        struct Person {
+            string name;
+            address wallet;
+        }
+    
+        struct Mail {
+            Person from;
+            Person to;
+            string contents;
+        }
+    
+        bytes32 constant EIP712DOMAIN_TYPEHASH =
+            keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+    
+        bytes32 constant PERSON_TYPEHASH = keccak256("Person(string name,address wallet)");
+    
+        bytes32 constant MAIL_TYPEHASH =
+            keccak256("Mail(Person from,Person to,string contents)Person(string name,address wallet)");
+    
+        bytes32 DOMAIN_SEPARATOR;
+    
+        constructor() public {
+            DOMAIN_SEPARATOR = hash(
+                EIP712Domain({
+                    name: "Ether Mail",
+                    version: "1",
+                    chainId: 1,
+                    // verifyingContract: this
+                    verifyingContract: 0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC
+                })
+            );
+        }
+    
+        function hash(EIP712Domain eip712Domain) internal pure returns (bytes32) {
+            return keccak256(
+                abi.encode(
+                    EIP712DOMAIN_TYPEHASH,
+                    keccak256(bytes(eip712Domain.name)),
+                    keccak256(bytes(eip712Domain.version)),
+                    eip712Domain.chainId,
+                    eip712Domain.verifyingContract
+                )
+            );
+        }
+    
+        function hash(Person person) internal pure returns (bytes32) {
+            return keccak256(abi.encode(PERSON_TYPEHASH, keccak256(bytes(person.name)), person.wallet));
+        }
+    
+        function hash(Mail mail) internal pure returns (bytes32) {
+            return keccak256(abi.encode(MAIL_TYPEHASH, hash(mail.from), hash(mail.to), keccak256(bytes(mail.contents))));
+        }
+    
+        function verify(Mail mail, uint8 v, bytes32 r, bytes32 s) internal view returns (bool) {
+            // Note: we need to use `encodePacked` here instead of `encode`.
+            bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, hash(mail)));
+            return ecrecover(digest, v, r, s) == mail.from.wallet;
+        }
+    
+        function test() public view returns (bool) {
+            // Example signed message
+            Mail memory mail = Mail({
+                from: Person({name: "Cow", wallet: 0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826}),
+                to: Person({name: "Bob", wallet: 0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB}),
+                contents: "Hello, Bob!"
+            });
+    
+            uint8 v = 28;
+            bytes32 r = 0x4355c47d63924e8a72e509b65029052eb6c299d53a04e167c5775fd466751c9d;
+            bytes32 s = 0x07299936d304c153f6443dfa05f40ff007d72911b6f72307f996231605b91562;
+    
+            assert(DOMAIN_SEPARATOR == 0xf2cee375fa42b42143804025fc449deafd50cc031ca257e0b194a650a912090f);
+            assert(hash(mail) == 0xc52c0ee5d84264471806290a3f2c4cecfc5490626bf912d01f240d7a274b371e);
+            assert(verify(mail, v, r, s));
+            return true;
+        }
+    }</code></pre>
+
+<h2>Easily connect EVM networks and chains to your wallet</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://chainlist.org/">link</a></p>
+
+<h2>What is the mempool?</h2>
+<p>When a transaction is initiated it uses an RPC_URL, as we know. This URL points to a specific node on the blockchain which, instead of immediately integrating it into its block, places it into its 'memory pool', or 'mempool'. This constitutes the lower tier of workings that enable blockchain.</p><p></p><p>As we know, nodes essentially "take turns" building blocks for the blockchain. So if you send your transaction to a single node, the node will have to wait until it's that node's turn to include your transaction! This could take months!</p><p></p><p>So what the node does is accept your transaction, and add it to the <code>mempool</code>, accessible to other nodes. When another node sees this transaction waiting to be sent, it will pull transactions from the <code>mempool</code> to include in the block, often based on gas paid for that transaction.</p><p></p><p>So this "<code>mempool</code>" is like a waiting room for transactions.</p>
+
+<h2>What is MEV?</h2>
+<p>Mev stands for "Maximum Extractable Value", or sometimes "Miner Extractable Value", and it's the value that blockchain node operators and users can extract by ordering transactions in a block in a specific order.</p><p></p><p>Learn more <a target="_blank" rel="noopener noreferrer nofollow" href="https://www.flashbots.net/">here</a></p><p></p><ul><li><p>MEV Protection</p><ul><li><p>Design</p></li><li><p><a target="_blank" rel="nofollow" href="https://docs.flashbots.net/flashbots-protect/overview">Flashbots Protect</a></p></li><li><p><a target="_blank" rel="nofollow" href="https://mevblocker.io/">MEVBlocker</a></p></li><li><p><a target="_blank" rel="nofollow" href="https://securerpc.com/">Securerpc</a></p></li></ul></li></ul>
+
+<h2>What is Front-running?</h2>
+<p>Suppose a malicious actor has visibility into the <code>mempool</code> and wants to use this to their advantage. Visibility into the <code>mempool</code> allows someone to effectively predict future transactions.</p><p></p><p>If a malicious actor were to see a transaction in this waiting room that would benefit them, they're able to send <em>their own</em> transaction, paying more gas, skipping the line.</p><p></p><p>The malicious actor's transaction would execute before the victims!</p><p></p><p>This is called Front-Running and is one of the most common forms of MEV.</p><p></p><img src="https://thequestionersbe.joesexperiences.com/uploads/mev.svg">
+
+<h2>What are we as the blockchain industry not so good at by Patrick?</h2>
+<ol><li><p>MEV bots</p></li><li><p>Writing stateful fuzzing and invariant test suites</p></li><li><p>wallet and centralisation security</p></li></ol>
+
+<h2>Where to learn solana?</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://youtu.be/amAq-WHAFs8?si=CuFihCBQ2KrVy7H2">https://youtu.be/amAq-WHAFs8?si=CuFihCBQ2KrVy7H2</a> <a target="_blank" rel="noopener noreferrer nofollow" href="https://youtu.be/HOdYZSe1uhE?si=g6XHS8fDm8jxl6kY">https://youtu.be/HOdYZSe1uhE?si=g6XHS8fDm8jxl6kY</a><br><br><a target="_blank" rel="noopener noreferrer nofollow" href="https://www.rareskills.io/solana-tutorial">https://www.rareskills.io/solana-tutorial</a> Another great resource if you don't wanna waste a lot of time watching tutorials</p>
+
+<h2>Recap of Cyfrin Updraft Security Course</h2>
+<p>We learned:</p><p>MEV</p><p>Signature Replays</p><p>Re-entrancy attacks</p><p>Audit process</p><p>Stateful fuzzing<br>Invariance</p><p>Arbitrage</p><p>DeFi</p><p>Barring and Lending</p><p>Flash loans<br>EVM compatibility between chains</p><p>Uniswap</p><p>Compoud</p><p>Verifiable randomness</p><p>Centralization</p><p>Denial of Service</p><p>Failure to Initialize</p><p>Access Controls</p><p>Oracle Manipulation</p><p>and so much more...<br></p><p>You know what to do now:</p><p>Show up to the code base - readme</p><p>Go through the scope</p><p>What are we doing/auditing?</p><p>What commit hash?</p><p>What compatibilities are we working with?</p><p>What tokens?</p><p>What chains?</p><p>Do some Recon</p><p>Understanding what the contract is supposed to do at a high level</p><p>You're gonna read the docs</p><p>You're gonna talk to the team</p><p>You're gonna draw some diagrams</p><p>You're gonna take notes, dump your thoughts down on paper</p><p>Start looking through the code</p><p>You know you're not gonna find stuff in the beginning</p><p>You kow you're just trying to figure out what does this code do? How can I understand this code? Is this codedoing what the protocol is intending it to do?</p><p>Yeah it might take me a couple days but I'm just trying to figure out what the code is doing</p><p>I wanna take notes in the code</p><p>I am gonna leave questions, questions for me to follow up on</p><p>Find bugs and vulnerabilities and attack the code like a hacker would</p><p>You notice their test suite isn't very good, you can write stateful fuzzing test suite to find bugs</p><p>You know of many different types of attacks that you can look for off of your Checklist</p><p>Are there any weird ERC20 here?</p><p>Is there MEV I should think about?</p><p></p><p>You've got a game plan!</p><p></p>
+
+
+
+
+
+
