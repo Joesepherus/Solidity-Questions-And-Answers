@@ -2,3 +2,9 @@ usdt/USDTApprovalPOC/lib/*
 
 usdt/USDTApprovalPOC/out/*
 usdt/USDTApprovalPOC/cache/*
+
+fuzzing/lib
+fuzing/out
+fuzzing/cache
+
+
