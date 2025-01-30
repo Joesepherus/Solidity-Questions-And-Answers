@@ -1,0 +1,12 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+rpc_url = "https://eth-mainnet.g.alchemy.com/v2/gjTLcNte86cTG90PLxWqBKbu8G_oS97v"
+forks = ["mainnet"]  # Use this to fork Ethereum Mainnet
+chain_id = 1
+
+[rpc_endpoints]
+mainnet = "https://eth-mainnet.g.alchemy.com/v2/gjTLcNte86cTG90PLxWqBKbu8G_oS97v"
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
